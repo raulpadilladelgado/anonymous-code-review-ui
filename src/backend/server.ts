@@ -7,6 +7,7 @@ import {SimpleGitClonerRepository} from "@/src/backend/simpleGitClonerRepository
 import {RepoCloner} from "@/src/backend/repoCloner";
 
 export async function cloneRandomRepositoryServerAction() {
+    console.log("HElllooo")
     await cloneRandomRepository(new RepoCloner(new SimpleGitClonerRepository()));
 }
 
