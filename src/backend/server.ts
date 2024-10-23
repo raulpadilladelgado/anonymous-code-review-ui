@@ -5,6 +5,8 @@ import fs from "fs";
 import path from "path";
 import {SimpleGitClonerRepository} from "@/src/backend/simpleGitClonerRepository";
 import {RepoCloner} from "@/src/backend/repoCloner";
+import {Octokit} from "octokit";
+import simpleGit from "simple-git";
 
 export async function cloneRandomRepositoryServerAction() {
     console.log("HElllooo")
@@ -39,5 +41,47 @@ export async function cloneRandomRepository(repoCloner: RepoCloner) {
     } else {
         console.log(`\`.git\` directory does not exist for ${repoName}.`);
     }
+
+    const newRepoUrl = await crearRepoEnOrg(repoName);
+    if (newRepoUrl) {
+        await subirCodigo(repoPath, newRepoUrl);
+        const newRepoDevUrl = newRepoUrl.replace('.com', '.dev').replace('.git', '');
+        console.log(`Redirigiendo a: ${newRepoDevUrl}`);
+        return newRepoDevUrl;
+    }
 }
 
+async function crearRepoEnOrg(repoName: string) {
+    const octokit = new Octokit({
+        auth: '<token>', // Sustituye con tu PAT
+    });
+    try {
+        const response = await octokit.rest.repos.createInOrg({
+            org: 'anonymous-code-review',
+            name: repoName,
+            private: false,  // O puedes usar false si quieres que sea público
+            description: 'Descripción del repositorio',
+        });
+        console.log('Repositorio creado con éxito:', response.data);
+        return response.data.clone_url;
+    } catch (error) {
+        console.error('Error al crear el repositorio:', error);
+    }
+}
+
+async function subirCodigo(repoPath: string, newRepoUrl: string) {
+    const git = simpleGit(repoPath);
+    try {
+        await git.init();
+        await git.checkoutLocalBranch("main");
+        await git.addConfig("user.email", "anonymous@codereview.com");
+        await git.addConfig("user.name", "Anonymous Code Review");
+        await git.add(".");
+        await git.commit("Initial commit");
+        await git.addRemote("origin", `https://<token>@${newRepoUrl.replace('https://', '')}`);
+        await git.push("origin", "main", {"--set-upstream": null});
+        console.log('Código subido con éxito al nuevo repositorio.');
+    } catch (error) {
+        console.error('Error al subir el código al nuevo repositorio:', error);
+    }
+}
