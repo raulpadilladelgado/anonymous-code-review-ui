@@ -9,27 +9,27 @@ import {v4 as uuidv4} from 'uuid';
 import {RepositoryManager} from "@/src/backend/repositoryManager";
 
 export async function OpenAnonymousRandomRepositoryServerAction() {
-    await execute(new GitRepositoryManager());
-}
-
-export async function execute(repoCloner: RepositoryManager) {
-    const tmpDir = os.tmpdir();
     const repos = [
         "https://github.com/octocat/Hello-World",
         "https://github.com/raulpadilladelgado/botlinera",
         "https://github.com/raulpadilladelgado/toolify"
     ];
+    await execute(repos, new GitRepositoryManager());
+}
+
+export async function execute(repos: string[], repositoryManager: RepositoryManager) {
+    const tmpDir = os.tmpdir();
     const repoUrl = getRandomFrom(repos);
     const repoName = removeGitExtensionFrom(repoUrl);
     const repoPath = path.join(tmpDir, repoName);
 
-    await cloneRepository(repoPath, repoName, repoUrl, repoCloner);
+    await cloneRepository(repoPath, repoName, repoUrl, repositoryManager);
     makeRepositoryAnonymous(repoPath, repoName);
 
-    const optionNewRepoUrl = await repoCloner.createInRemote(`${repoName}-${uuidv4()}`);
+    const optionNewRepoUrl = await repositoryManager.createInRemote(`${repoName}-${uuidv4()}`);
     if (optionNewRepoUrl.isSome()) {
         const newRepoUrl = optionNewRepoUrl.getOrElse("") as string;
-        await repoCloner.push(repoPath, newRepoUrl);
+        await repositoryManager.push(repoPath, newRepoUrl);
         const newRepoDevUrl = createCodeSharingUrl(newRepoUrl);
         console.log(`Redirigiendo a: ${newRepoDevUrl}`);
         redirect(newRepoDevUrl);
