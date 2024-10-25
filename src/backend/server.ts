@@ -12,17 +12,7 @@ export async function OpenAnonymousRandomRepositoryServerAction(formData: FormDa
     const urls = formData.get("urls") as string
     const urlList = urls.split("\n").filter(url => url.trim() !== "")
     console.log(urlList)
-    await execute(new GitRepositoryManager());
-}
-
-export async function execute(repoCloner: RepositoryManager) {
-    const tmpDir = os.tmpdir();
-    const repos = [
-        "https://github.com/octocat/Hello-World",
-        "https://github.com/raulpadilladelgado/botlinera",
-        "https://github.com/raulpadilladelgado/toolify"
-    ];
-    await execute(repos, new GitRepositoryManager());
+    await execute(urlList, new GitRepositoryManager());
 }
 
 export async function execute(repos: string[], repositoryManager: RepositoryManager) {
