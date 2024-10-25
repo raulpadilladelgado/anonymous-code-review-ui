@@ -1,7 +1,7 @@
-import {ClonerRepository} from "@/src/backend/clonerRepository";
+import {RepositoryManager} from "@/src/backend/repositoryManager";
 
 export class RepoCloner {
-    constructor(private readonly cloner: ClonerRepository) {
+    constructor(private readonly cloner: RepositoryManager) {
     }
 
     async clone(url: string, path: string) {

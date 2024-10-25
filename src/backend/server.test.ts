@@ -1,10 +1,10 @@
 import { describe, it, expect, vi } from "vitest";
-import {cloneRandomRepository} from "@/src/backend/server";
+import {execute} from "@/src/backend/server";
 
-import {ClonerRepository} from "@/src/backend/clonerRepository";
+import {RepositoryManager} from "@/src/backend/repositoryManager";
 import {RepoCloner} from "@/src/backend/repoCloner";
 
-class MockClonerRepository implements ClonerRepository {
+class MockClonerRepository implements RepositoryManager {
     clone = vi.fn().mockResolvedValue(undefined);
 }
 
@@ -13,7 +13,7 @@ describe("Server should", () => {
         const mockCloner = new MockClonerRepository();
         const repoCloner = new RepoCloner(mockCloner);
 
-        await cloneRandomRepository(repoCloner);
+        await execute(repoCloner);
 
         expect(mockCloner.clone).toHaveBeenCalled();
     });
