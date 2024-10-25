@@ -43,16 +43,16 @@ export async function cloneRandomRepository(repoCloner: RepoCloner) {
         console.log(`\`.git\` directory does not exist for ${repoName}.`);
     }
 
-    const newRepoUrl = await crearRepoEnOrg(repoName);
+    const newRepoUrl = await createRepositoryInRemote(repoName);
     if (newRepoUrl) {
-        await subirCodigo(repoPath, newRepoUrl);
+        await pushCode(repoPath, newRepoUrl);
         const newRepoDevUrl = newRepoUrl.replace('.com', '.dev').replace('.git', '');
         console.log(`Redirigiendo a: ${newRepoDevUrl}`);
         redirect(newRepoDevUrl);
     }
 }
 
-async function crearRepoEnOrg(repoName: string) {
+async function createRepositoryInRemote(repoName: string) {
     const octokit = new Octokit({
         auth: process.env.GITHUB_TOKEN,
     });
@@ -70,7 +70,7 @@ async function crearRepoEnOrg(repoName: string) {
     }
 }
 
-async function subirCodigo(repoPath: string, newRepoUrl: string) {
+async function pushCode(repoPath: string, newRepoUrl: string) {
     const git = simpleGit(repoPath);
     try {
         await git.init();
