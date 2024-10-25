@@ -5,8 +5,9 @@ import fs from "fs";
 import path from "path";
 import {SimpleGitClonerRepository} from "@/src/backend/simpleGitClonerRepository";
 import {RepoCloner} from "@/src/backend/repoCloner";
-import {Octokit} from "octokit";
 import simpleGit from "simple-git";
+import {redirect} from "next/navigation";
+import {Octokit} from "octokit";
 
 export async function cloneRandomRepositoryServerAction() {
     console.log("HElllooo")
@@ -47,13 +48,13 @@ export async function cloneRandomRepository(repoCloner: RepoCloner) {
         await subirCodigo(repoPath, newRepoUrl);
         const newRepoDevUrl = newRepoUrl.replace('.com', '.dev').replace('.git', '');
         console.log(`Redirigiendo a: ${newRepoDevUrl}`);
-        return newRepoDevUrl;
+        redirect(newRepoDevUrl);
     }
 }
 
 async function crearRepoEnOrg(repoName: string) {
     const octokit = new Octokit({
-        auth: '<token>', // Sustituye con tu PAT
+        auth: process.env.GITHUB_TOKEN,
     });
     try {
         const response = await octokit.rest.repos.createInOrg({
@@ -78,7 +79,7 @@ async function subirCodigo(repoPath: string, newRepoUrl: string) {
         await git.addConfig("user.name", "Anonymous Code Review");
         await git.add(".");
         await git.commit("Initial commit");
-        await git.addRemote("origin", `https://<token>@${newRepoUrl.replace('https://', '')}`);
+        await git.addRemote("origin", `https://${process.env.GITHUB_TOKEN}@${newRepoUrl.replace('https://', '')}`);
         await git.push("origin", "main", {"--set-upstream": null});
         console.log('Código subido con éxito al nuevo repositorio.');
     } catch (error) {
