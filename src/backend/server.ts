@@ -8,7 +8,15 @@ import {redirect} from "next/navigation";
 import {v4 as uuidv4} from 'uuid';
 import {RepositoryManager} from "@/src/backend/repositoryManager";
 
-export async function OpenAnonymousRandomRepositoryServerAction() {
+export async function OpenAnonymousRandomRepositoryServerAction(formData: FormData) {
+    const urls = formData.get("urls") as string
+    const urlList = urls.split("\n").filter(url => url.trim() !== "")
+    console.log(urlList)
+    await execute(new GitRepositoryManager());
+}
+
+export async function execute(repoCloner: RepositoryManager) {
+    const tmpDir = os.tmpdir();
     const repos = [
         "https://github.com/octocat/Hello-World",
         "https://github.com/raulpadilladelgado/botlinera",
