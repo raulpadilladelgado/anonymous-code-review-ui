@@ -1,7 +1,6 @@
 import {RepositoryManager} from "@/src/backend/repositoryManager";
 import simpleGit from "simple-git";
 import {Octokit} from "octokit";
-import {Option} from "@leanmind/monads";
 
 export class GitRepositoryManager implements RepositoryManager {
     async clone(url: string, path: string): Promise<void> {
@@ -20,10 +19,10 @@ export class GitRepositoryManager implements RepositoryManager {
                 description: 'Descripción del repositorio',
             });
             console.log('Repositorio creado con éxito:', response.data);
-            return Option.of(response.data.clone_url);
+            return response.data.clone_url;
         } catch (error) {
             console.error('Error al crear el repositorio:', error);
-            return Option.of(null);
+            throw error;
         }
     }
 

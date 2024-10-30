@@ -24,14 +24,11 @@ export async function execute(repos: string[], repositoryManager: RepositoryMana
     await cloneRepository(repoPath, repoName, repoUrl, repositoryManager);
     makeRepositoryAnonymous(repoPath, repoName);
 
-    const optionNewRepoUrl = await repositoryManager.createInRemote(`${repoName}-${uuidv4()}`);
-    if (optionNewRepoUrl.isSome()) {
-        const newRepoUrl = optionNewRepoUrl.getOrElse("") as string;
-        await repositoryManager.push(repoPath, newRepoUrl);
-        const newRepoDevUrl = createCodeSharingUrl(newRepoUrl);
-        console.log(`Redirigiendo a: ${newRepoDevUrl}`);
-        redirect(newRepoDevUrl);
-    }
+    const newRepoUrl = await repositoryManager.createInRemote(`${repoName}-${uuidv4()}`);
+    await repositoryManager.push(repoPath, newRepoUrl);
+    const newRepoDevUrl = createCodeSharingUrl(newRepoUrl);
+    console.log(`Redirigiendo a: ${newRepoDevUrl}`);
+    redirect(newRepoDevUrl);
 }
 
 async function cloneRepository(repoPath: string, repoName: string, repoUrl: string, repoCloner: RepositoryManager) {
