@@ -1,9 +1,20 @@
 import {RepositoryManager} from "@/src/backend/repositoryManager";
 import simpleGit from "simple-git";
 import {Octokit} from "octokit";
+import {exec} from "node:child_process";
 
 export class GitRepositoryManager implements RepositoryManager {
     async clone(url: string, path: string): Promise<void> {
+        exec(`git -v`, (error, stdout, stderr) => {
+            if (error) {
+                console.error(`Error al clonar el repositorio: ${error.message}`);
+                return;
+            }
+            if (stderr) {
+                console.error(`Error al clonar el repositorio: ${stderr}`);
+            }
+            console.log(`stdout: ${stdout}`);
+        });
         await simpleGit().clone(url, path);
     }
 
