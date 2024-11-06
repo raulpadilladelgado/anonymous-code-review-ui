@@ -7,6 +7,7 @@ import {GitRepositoryManager} from "@/src/backend/gitRepositoryManager";
 import {redirect} from "next/navigation";
 import {v4 as uuidv4} from 'uuid';
 import {RepositoryManager} from "@/src/backend/repositoryManager";
+import {randomInt} from "node:crypto";
 
 export async function OpenAnonymousRandomRepositoryServerAction(formData: FormData) {
     const urls = formData.get("urls") as string
@@ -57,7 +58,8 @@ function createCodeSharingUrl(newRepoUrl: string) {
 }
 
 function getRandomFrom(repos: string[]) {
-    return repos[Math.floor(Math.random() * repos.length)];
+    const randomIndex = randomInt(0, repos.length);
+    return repos[randomIndex];
 }
 
 function removeGitExtensionFrom(repoUrl: string) {
