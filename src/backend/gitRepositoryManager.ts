@@ -5,13 +5,13 @@ import {exec} from "node:child_process";
 
 export class GitRepositoryManager implements RepositoryManager {
     async clone(url: string, path: string): Promise<void> {
-        exec(`git -v`, (error, stdout, stderr) => {
+        exec(`ls /usr/bin`, (error, stdout, stderr) => {
             if (error) {
-                console.error(`Error al clonar el repositorio: ${error.message}`);
+                console.error(`Petooo: ${error.message}`);
                 return;
             }
             if (stderr) {
-                console.error(`Error al clonar el repositorio: ${stderr}`);
+                console.error(`Petoooo mass Error al clonar el repositorio: ${stderr}`);
             }
             console.log(`stdout: ${stdout}`);
         });
