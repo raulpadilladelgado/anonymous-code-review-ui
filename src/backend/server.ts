@@ -10,7 +10,7 @@ import {RepositoryManager} from "@/src/backend/repositoryManager";
 
 export async function OpenAnonymousRandomRepositoryServerAction(formData: FormData) {
     const urls = formData.get("urls") as string
-    const urlList = urls.split("\n").filter(url => url.trim() !== "")
+    const urlList = urls.split("\n").filter(url => url.trim() !== "").map(url => url.replace("\r", ""))
     console.log(urlList)
     await execute(urlList, new GitRepositoryManager());
 }
