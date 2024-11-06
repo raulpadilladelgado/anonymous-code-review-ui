@@ -88,4 +88,36 @@ export class GitRepositoryManager implements RepositoryManager {
             console.error('Error al subir el código al nuevo repositorio:', error);
         }
     }
+
+    async deleteAllReposInOrg(org: string) {
+        const octokit = new Octokit({
+            auth: process.env.GITHUB_TOKEN,
+        });
+        try {
+            // Obtener todos los repositorios de la organización
+            const repos = await octokit.paginate(octokit.rest.repos.listForOrg, {
+                org,
+                per_page: 100,
+            });
+
+            console.log(`Repositorios encontrados en la organización "${org}": ${repos.length}`);
+
+            // Eliminar cada repositorio
+            for (const repo of repos) {
+                try {
+                    await octokit.rest.repos.delete({
+                        owner: org,
+                        repo: repo.name,
+                    });
+                    console.log(`Repositorio eliminado: ${repo.name}`);
+                } catch (error) {
+                    console.error(`Error al eliminar el repositorio ${repo.name}:`, error);
+                }
+            }
+
+            console.log('Todos los repositorios han sido eliminados.');
+        } catch (error) {
+            console.error('Error al obtener repositorios:', error);
+        }
+    }
 }

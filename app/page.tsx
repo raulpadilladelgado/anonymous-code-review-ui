@@ -1,11 +1,13 @@
-import { Textarea } from "@/components/ui/textarea"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-import {  Code2, Shuffle } from "lucide-react"
-import {OpenAnonymousRandomRepositoryServerAction} from "@/src/backend/server";
+import {Textarea} from "@/components/ui/textarea"
+import {Button} from "@/components/ui/button"
+import {Card, CardContent} from "@/components/ui/card"
+import {Label} from "@/components/ui/label"
+import {Code2, Shuffle} from "lucide-react"
+import {deleteAllRepositoriesServerAction, openAnonymousRandomRepositoryServerAction} from "@/src/backend/server";
 
 export default function CodeReviewQuiz() {
+    const isLocal = process.env.NODE_ENV === 'development'
+
     return (
         <main className="flex-1 flex items-center justify-center p-4">
             <Card
@@ -21,7 +23,7 @@ export default function CodeReviewQuiz() {
                         </h2>
                         <p className="text-gray-300">¡Deja que el azar elija tu próxima revisión de código!</p>
                     </div>
-                    <form action={OpenAnonymousRandomRepositoryServerAction} className="space-y-4">
+                    <form action={openAnonymousRandomRepositoryServerAction} className="space-y-4">
                         <div className="space-y-2">
                             <Label htmlFor="urls" className="text-lg font-semibold text-gray-300">
                                 URLs de Repositorios
@@ -33,13 +35,26 @@ export default function CodeReviewQuiz() {
                                 className="h-32 bg-gray-800 border-gray-700 text-white placeholder-gray-500 focus:border-purple-500 focus:ring-purple-500"
                             />
                         </div>
+
                         <Button
                             type="submit"
-                            className="w-full bg-gradient-to-r from-gray-700 to-[#39b3c2] hover:from-gray-600 hover:to-[#2a8a96] text-white font-bold py-3 rounded-full transition-all duration-300 transform hover:scale-105"
+                            className="w-full bg-gradient-to-r from-gray-700 to-[#39b3c2] hover:from-gray-600 hover:to-[#2a8a96] text-white font-bold py-3 rounded-full transition-all duration-300 transform hover:scale-105 mr-2"
                         >
                             <Shuffle className="mr-2 h-5 w-5"/> ¡Girar la Ruleta!
                         </Button>
                     </form>
+                    {isLocal ? (
+                            <form action={deleteAllRepositoriesServerAction} className="space-y-4">
+                                <Button
+                                    type="submit"
+                                    className="w-full bg-gradient-to-r from-gray-700 to-[#39b3c2] hover:from-gray-600 hover:to-[#2a8a96] text-white font-bold py-3 rounded-full transition-all duration-300 transform hover:scale-105"
+                                >
+                                    Limpiar Repositorios
+                                </Button>
+                            </form>
+                        )
+                        : <></>
+                    }
                 </CardContent>
             </Card>
         </main>

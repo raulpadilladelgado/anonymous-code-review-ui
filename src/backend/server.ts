@@ -9,11 +9,15 @@ import {v4 as uuidv4} from 'uuid';
 import {RepositoryManager} from "@/src/backend/repositoryManager";
 import {randomInt} from "node:crypto";
 
-export async function OpenAnonymousRandomRepositoryServerAction(formData: FormData) {
+export async function openAnonymousRandomRepositoryServerAction(formData: FormData) {
     const urls = formData.get("urls") as string
     const urlList = urls.split("\n").filter(url => url.trim() !== "").map(url => url.replace("\r", ""))
     console.log(urlList)
     await execute(urlList, new GitRepositoryManager());
+}
+
+export async function deleteAllRepositoriesServerAction() {
+    await new GitRepositoryManager().deleteAllReposInOrg("anonymous-code-review");
 }
 
 export async function execute(repos: string[], repositoryManager: RepositoryManager) {
