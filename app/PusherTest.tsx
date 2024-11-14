@@ -11,7 +11,7 @@ const PusherTest = () => {
             cluster: 'eu'
         });
         const channel = pusher.subscribe('my-channel');
-        channel.bind('my-event', function(data) {
+        channel.bind('my-event', function(data: { message: string }) {
             setMessage(data.message);
             setMessages([...messages, data.message]);
         });
