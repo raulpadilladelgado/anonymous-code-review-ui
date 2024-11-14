@@ -15,7 +15,6 @@ const PusherTest = () => {
             setMessage(data.message);
             setMessages([...messages, data.message]);
         });
-        // Cleanup function to unsubscribe from the channel when the component unmounts
         return () => {
             channel.unbind_all();
             channel.unsubscribe();
